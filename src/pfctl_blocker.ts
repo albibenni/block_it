@@ -184,6 +184,7 @@ class PfctlBlocker {
       const { stdout } = await execAsync("sudo pfctl -s info");
       return stdout.includes("Status: Enabled");
     } catch (error) {
+      handleErrorLog(error, "Failed to check pfctl status");
       return false;
     }
   }
