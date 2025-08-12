@@ -1,10 +1,10 @@
 import { DomainBlocker } from "../domain_blocker.ts";
 
-export async function domain_blocker(): Promise<void> {
-  const blocker = new DomainBlocker();
-
+export async function domain_blocker(
+  domains: string[],
+): Promise<DomainBlocker | undefined> {
   try {
-    await blocker.initialize();
+    const blocker = new DomainBlocker(domains);
 
     // Block multiple domains
     await blocker.blockDomains([
@@ -26,26 +26,20 @@ export async function domain_blocker(): Promise<void> {
       "youtube.com",
     ]);
 
-    // Check status
-    console.log("Blocked domains:", blocker.getBlockedDomains());
-    console.log(
-      "Is facebook.com blocked?",
-      blocker.isDomainBlocked("facebook.com"),
-    );
-
-    // Unblock domain
-    // await blocker.unblockDomain('facebook.com');
+    return blocker;
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-export async function remove_blocks(): Promise<void> {
-  const blocker = new DomainBlocker();
-
+export async function remove_blocks(
+  blocker: DomainBlocker | undefined,
+): Promise<void> {
+  if (blocker === undefined) {
+    console.error("DomainBlocker is undefined");
+    return;
+  }
   try {
-    await blocker.initialize();
-
     // Unblock multiple domains
     await blocker.clearAllBlocks();
     console.log(`Successfully unblocked`);

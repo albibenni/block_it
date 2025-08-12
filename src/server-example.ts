@@ -5,6 +5,7 @@ import {
   domain_blocker,
   remove_blocks,
 } from "./service/domain_blocker.service.ts";
+import { DomainBlocker } from "./domain_blocker.ts";
 
 type AsyncRequestHandler = (
   req: http.IncomingMessage,
@@ -38,22 +39,35 @@ function listenAsync(server: http.Server, port: number): Promise<void> {
 
 async function startServer() {
   try {
+    let block: DomainBlocker | undefined = undefined;
     const server = await createServerAsync(async (req, res) => {
       const parsedUrl = url.parse(req.url || "", true);
       if (req.method === "GET" && parsedUrl.pathname === "/v2/act") {
-        await domain_blocker();
+        block = await domain_blocker([
+          "youtube.com",
+          "www.youtube.com",
+          "m.youtube.com",
+          // "music.youtube.com",
+          // "youtubei.googleapis.com",
+          // "youtube.googleapis.com",
+          // "youtu.be",
+          // "ytimg.com",
+          // "googlevideo.com",
+          // "yt3.ggpht.com",
+          // "youtube-nocookie.com",
+        ]);
       }
       if (req.method === "GET" && parsedUrl.pathname === "/v2/deact") {
-        await remove_blocks();
+        await remove_blocks(block);
       }
 
       if (req.method === "GET" && parsedUrl.pathname === "/activate") {
-        const blocker = new PfctlBlocker({
+        const blockera = new PfctlBlocker({
           enableLogging: true,
         });
 
         // Block domains - comprehensive YouTube blocking
-        await blocker.blockDomains([
+        await blockera.blockDomains([
           "youtube.com",
           "www.youtube.com",
           "m.youtube.com",
@@ -69,7 +83,7 @@ async function startServer() {
         ]);
 
         // Get current status
-        const status = await blocker.getStatus();
+        const status = await blockera.getStatus();
         console.log("Enabled:", status.enabled);
 
         // Check if domains parameter is provided for blocking
@@ -81,8 +95,8 @@ async function startServer() {
               : [];
 
           if (domains.length > 0) {
-            await blocker.blockDomains(domains);
-            const updatedStatus = await blocker.getStatus();
+            await blockera.blockDomains(domains);
+            const updatedStatus = await blockera.getStatus();
 
             res.writeHead(200, { "Content-Type": "application/json" });
             res.end(
