@@ -1,6 +1,10 @@
 import PfctlBlocker from "./pfctl_blocker.ts";
 import http from "node:http";
 import url from "node:url";
+import {
+  domain_blocker,
+  remove_blocks,
+} from "./service/domain_blocker.service.ts";
 
 type AsyncRequestHandler = (
   req: http.IncomingMessage,
@@ -36,6 +40,12 @@ async function startServer() {
   try {
     const server = await createServerAsync(async (req, res) => {
       const parsedUrl = url.parse(req.url || "", true);
+      if (req.method === "GET" && parsedUrl.pathname === "/v2/act") {
+        await domain_blocker();
+      }
+      if (req.method === "GET" && parsedUrl.pathname === "/v2/deact") {
+        await remove_blocks();
+      }
 
       if (req.method === "GET" && parsedUrl.pathname === "/activate") {
         const blocker = new PfctlBlocker({

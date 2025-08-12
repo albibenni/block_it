@@ -5,6 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
+    "dev": "node ./src/server-example.ts",
     "lint": "pnpm dlx eslint .",
     "indent:check": "prettier . --check",
     "indent:write": "prettier . --write",
