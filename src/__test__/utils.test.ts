@@ -36,4 +36,26 @@ describe("handleErrorLog", () => {
 
     consoleSpy.mockRestore();
   });
+
+  it("should log prefixed uppercase string when error is a string and other param is provided", () => {
+    const consoleSpy = vi.spyOn(console, "log");
+
+    handleErrorLog("error message", "PREFIX");
+
+    expect(consoleSpy).toHaveBeenCalledWith("PREFIX ERROR MESSAGE");
+
+    consoleSpy.mockRestore();
+  });
+
+  it("should log prefixed error message when error is an Error object and other param is provided", () => {
+    const consoleSpy = vi.spyOn(console, "log");
+
+    const error = new Error("Error details");
+
+    handleErrorLog(error, "PREFIX");
+
+    expect(consoleSpy).toHaveBeenCalledWith("PREFIX Error details");
+
+    consoleSpy.mockRestore();
+  });
 });
