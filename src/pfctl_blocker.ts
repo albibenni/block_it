@@ -2,6 +2,7 @@ import { exec } from "child_process";
 import { promises as fs } from "fs";
 import { promises as dns } from "dns";
 import { promisify } from "util";
+import { handleErrorLog } from "./utils.ts";
 
 const execAsync = promisify(exec);
 
@@ -55,7 +56,8 @@ class PfctlBlocker {
           console.warn(`Failed to resolve ${domain}: No IP addresses found`);
         }
       } catch (error) {
-        console.warn(`Failed to resolve ${domain}:`, (error as Error).message);
+        handleErrorLog(error, "Failed to resolve ");
+        console.warn(` ${domain}:`, (error as Error).message);
       }
     }
 
@@ -114,6 +116,7 @@ class PfctlBlocker {
       });
 
       // Load the rules
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { stdout, stderr } = await execAsync(`sudo pfctl -f ${rulesFile}`);
 
       if (stderr && this.enableLogging) {
@@ -135,6 +138,7 @@ class PfctlBlocker {
   async blockIp(ip: string): Promise<void> {
     try {
       const rule = `block drop out quick to ${ip}`;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { stdout, stderr } = await execAsync(
         `echo "${rule}" | sudo pfctl -f -`,
       );
@@ -157,6 +161,7 @@ class PfctlBlocker {
   async removeAllRules(): Promise<void> {
     try {
       // Flush all rules and disable
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { stdout, stderr } = await execAsync("sudo pfctl -F all -d");
 
       if (stderr && this.enableLogging) {
