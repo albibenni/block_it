@@ -17,7 +17,7 @@ export class PfctlBlocker implements IPfctlBlocker {
   /**
    * Resolve domain names to IP addresses
    */
-  private async resolveDomains(domains: string[]): Promise<string[]> {
+  async resolveDomains(domains: string[]): Promise<string[]> {
     const ips: string[] = [];
 
     for (const domain of domains) {
