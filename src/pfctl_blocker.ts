@@ -3,14 +3,11 @@ import { promises as fs } from "fs";
 import { promises as dns } from "dns";
 import { promisify } from "util";
 import { handleErrorLog } from "./utils.ts";
+import type { IPfctlBlocker, PfctlOptions } from "./types/interfaces.ts";
 
 const execAsync = promisify(exec);
 
-type PfctlOptions = {
-  enableLogging?: boolean;
-};
-
-class PfctlBlocker {
+export class PfctlBlocker implements IPfctlBlocker {
   private readonly enableLogging: boolean;
 
   constructor(options: PfctlOptions = {}) {
@@ -227,6 +224,3 @@ class PfctlBlocker {
     await this.blockDomains(domains);
   }
 }
-
-export default PfctlBlocker;
-export { PfctlBlocker, type PfctlOptions };
