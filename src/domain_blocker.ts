@@ -1,13 +1,9 @@
-import { exec } from "child_process";
-import { promisify } from "util";
 import * as fs from "fs/promises";
 import * as os from "os";
-import { handleErrorLog } from "./utils.ts";
+import { execAsync, handleErrorLog } from "./utils.ts";
 import type { IPlatform } from "./types/types.ts";
 import { PLATFORM } from "./types/types.ts";
 import PfctlBlocker from "./pfctl_blocker.ts";
-
-const execAsync = promisify(exec);
 
 export type BlockingRule = {
   domain: string;
