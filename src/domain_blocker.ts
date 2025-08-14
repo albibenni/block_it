@@ -15,7 +15,7 @@ export class DomainBlocker {
   private blockedDomains: Set<string> = new Set();
   private platform: IPlatform = PLATFORM.LINUX;
   private readonly persistentRulesFile = "/etc/iptables/rules.v4";
-  private macOSblocker: PfctlBlocker | undefined = undefined;
+  macOSblocker: PfctlBlocker | undefined = undefined;
 
   constructor(domains: string[]) {
     this.platform = os.platform() as IPlatform;

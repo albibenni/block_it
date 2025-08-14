@@ -42,19 +42,52 @@ async function startServer() {
     let block: DomainBlocker | undefined = undefined;
     const server = await createServerAsync(async (req, res) => {
       const parsedUrl = url.parse(req.url || "", true);
-      if (req.method === "GET" && parsedUrl.pathname === "/v2/act") {
+      if (req.method === "GET" && parsedUrl.pathname === "/") {
+        const updatedStatus = await block!.macOSblocker!.getStatus();
+        const domains = block?.getBlockedDomains();
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            message: `Block domains providing /v2/act/yt or /v2/act/net - deactivate via /v2/deact`,
+            domains: domains,
+            status: updatedStatus,
+          }),
+        );
+      }
+      if (req.method === "GET" && parsedUrl.pathname === "/v2/act/yt") {
         block = await domain_blocker([
           "youtube.com",
           "www.youtube.com",
           "m.youtube.com",
-          // "music.youtube.com",
-          // "youtubei.googleapis.com",
-          // "youtube.googleapis.com",
-          // "youtu.be",
-          // "ytimg.com",
-          // "googlevideo.com",
-          // "yt3.ggpht.com",
-          // "youtube-nocookie.com",
+          "music.youtube.com",
+          "youtubei.googleapis.com",
+          "youtube.googleapis.com",
+          "youtu.be",
+          "ytimg.com",
+          "googlevideo.com",
+          "yt3.ggpht.com",
+          "youtube-nocookie.com",
+        ]);
+      }
+      if (req.method === "GET" && parsedUrl.pathname === "/v2/act/net") {
+        block = await domain_blocker([
+          "netflix.com",
+          "www.netflix.com",
+          "movies.netflix.com",
+          "ichnaea.netflix.com",
+          "nflxvideo.net",
+          "cdn1.nflxext.com",
+          "netflix.net",
+          "netflixdnstest0.com",
+          "netflixdnstest1.com",
+          "netflixdnstest2.com",
+          "netflixdnstest3.com",
+          "netflixdnstest4.com",
+          "netflixdnstest5.com",
+          "netflixdnstest6.com",
+          "netflixdnstest7.com",
+          "netflixdnstest8.com",
+          "netflixdnstest9.com",
         ]);
       }
       if (req.method === "GET" && parsedUrl.pathname === "/v2/deact") {
@@ -124,8 +157,8 @@ async function startServer() {
       }
     });
 
-    await listenAsync(server, 3000);
-    console.log("Server started on port 3000");
+    await listenAsync(server, 8080);
+    console.log("Server started on port 8080");
   } catch (error) {
     console.error("Server failed to start:", error);
   }
