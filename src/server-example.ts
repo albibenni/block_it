@@ -1,11 +1,11 @@
-import PfctlBlocker from "./pfctl_blocker.ts";
+import { PfctlBlocker } from "./pfctl_blocker.ts";
 import http from "node:http";
 import url from "node:url";
 import {
   domain_blocker,
   remove_blocks,
 } from "./service/domain_blocker.service.ts";
-import { DomainBlocker } from "./domain_blocker.ts";
+import type { DomainBlocker } from "./domain_blocker.ts";
 
 type AsyncRequestHandler = (
   req: http.IncomingMessage,

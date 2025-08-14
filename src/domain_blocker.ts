@@ -3,7 +3,7 @@ import * as os from "os";
 import { execAsync, handleErrorLog } from "./utils.ts";
 import type { IPlatform } from "./types/types.ts";
 import { PLATFORM } from "./types/types.ts";
-import PfctlBlocker from "./pfctl_blocker.ts";
+import { PfctlBlocker } from "./pfctl_blocker.ts";
 
 export type BlockingRule = {
   domain: string;
@@ -15,7 +15,7 @@ export class DomainBlocker {
   private blockedDomains: Set<string> = new Set();
   private platform: IPlatform = PLATFORM.LINUX;
   private readonly persistentRulesFile = "/etc/iptables/rules.v4";
-  macOSblocker: PfctlBlocker | undefined = undefined;
+  private macOSblocker: PfctlBlocker | undefined = undefined;
 
   constructor(domains: string[]) {
     this.platform = os.platform() as IPlatform;
