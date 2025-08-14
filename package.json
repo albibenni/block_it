@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node ./src/server-example.ts",
+    "proxy": "node ./src/example_website_blocker.ts",
     "lint": "pnpm dlx eslint .",
     "indent:check": "prettier . --check",
     "indent:write": "prettier . --write",
