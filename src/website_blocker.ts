@@ -1,4 +1,5 @@
 import http from "http";
+import https from "https";
 import url from "url";
 import net from "net";
 
@@ -63,9 +64,10 @@ export class LocalProxyServer {
         return;
       }
 
+      const protocol = "http";
       const targetUrl = req.url.startsWith("http")
         ? req.url
-        : `http://${req.headers.host}${req.url}`;
+        : `${protocol}://${req.headers.host}${req.url}`;
 
       if (this.shouldBlockUrl(targetUrl)) {
         this.sendBlockedResponse(res, targetUrl);
@@ -134,16 +136,24 @@ export class LocalProxyServer {
       return;
     }
 
+    const targetUrl = req.url.startsWith("http")
+      ? req.url
+      : `http://${req.headers.host}${req.url}`;
+
+    const urlObj = new URL(targetUrl);
+    const isHttps = urlObj.protocol === "https:";
+
     const hostParts = req.headers.host.split(":");
     const options = {
       hostname: hostParts[0],
-      port: parseInt(hostParts[1] || "80"),
+      port: parseInt(hostParts[1] || (isHttps ? "443" : "80")),
       path: req.url,
       method: req.method,
       headers: req.headers,
     };
 
-    const proxy = http.request(options, (proxyRes) => {
+    const requestModule = isHttps ? https : http;
+    const proxy = requestModule.request(options, (proxyRes) => {
       res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
       proxyRes.pipe(res, { end: true });
     });

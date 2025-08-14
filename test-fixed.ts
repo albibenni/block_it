@@ -79,4 +79,3 @@ console.log("Result:", proxy.shouldBlockUrl("https://youtube.com"));
 
 console.log("\n5. youtube.com/watch (should be blocked):");
 console.log("Result:", proxy.shouldBlockUrl("https://youtube.com/watch?v=123"));
-
